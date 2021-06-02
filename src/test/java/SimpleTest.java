@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -14,12 +15,14 @@ public class SimpleTest {
         String roleFor;
         BoundClaim boundClaim;
     }
-    @Builder
-    @EqualsAndHashCode
-    static class BoundClaim{
-        List<String> roles;
-        String iam;
-        List<String> service;
+    static class BoundClaim extends HashMap<String, Object> {
+        static BoundClaim of(){
+            return new BoundClaim();
+        };
+        BoundClaim putt(String key, Object value){
+            super.put(key,value);
+            return this;
+        }
     }
 
     Gson gson = new GsonBuilder().create();
@@ -27,9 +30,10 @@ public class SimpleTest {
     @Test
     void testHuman(){
         Request expectedRequest = Request.builder().roleFor("Human")
-                .boundClaim(BoundClaim.builder().roles(List.of("role1", "role2", "role3")).build()).build();
+                .boundClaim(BoundClaim.of().putt("roles", List.of("role1", "role2", "role3"))).build();
         String actualSerialisedString = gson.toJson(expectedRequest);
-        String expectedRequestString = "{\"roleFor\":\"Human\",\"boundClaim\":{\"roles\":[\"role1\",\"role2\",\"role3\"]}}";
+        String expectedRequestString =
+                "{\"roleFor\":\"Human\",\"boundClaim\":{\"roles\":[\"role1\",\"role2\",\"role3\"]}}";
         assertThat(actualSerialisedString).isEqualTo(expectedRequestString);
         Request actualSerialisedRequest = gson.fromJson(expectedRequestString, Request.class);
         assertThat(actualSerialisedRequest).isEqualTo(expectedRequest);
@@ -38,8 +42,8 @@ public class SimpleTest {
     @Test
     void testLinux(){
         Request request = Request.builder().roleFor("linux")
-                .boundClaim(BoundClaim.builder().iam("unixmachine")
-                        .service(List.of("service-1", "service-2")).build()).build();
+                .boundClaim(BoundClaim.of().putt("iam","unixmachine")
+                        .putt("service",List.of("service-1", "service-2"))).build();
         String actual = gson.toJson(request);
         String expected = "{\"roleFor\":\"linux\",\"boundClaim\":{\"iam\":\"unixmachine\",\"service\":[\"service-1\"," +
                 "\"service-2\"]}}";
@@ -49,8 +53,8 @@ public class SimpleTest {
     @Test
     void testWindows(){
         Request request = Request.builder().roleFor("windows")
-                .boundClaim(BoundClaim.builder().iam("windowsmachine")
-                        .service(List.of("application-1")).build()).build();
+                .boundClaim(BoundClaim.of().putt("iam","windowsmachine")
+                        .putt("service",List.of("application-1"))).build();
         String actual = gson.toJson(request);
         String expected = "{\"roleFor\":\"windows\",\"boundClaim\":{\"iam\":\"windowsmachine\"," +
                 "\"service\":[\"application-1\"]}}";
