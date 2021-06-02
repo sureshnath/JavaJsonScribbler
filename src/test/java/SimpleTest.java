@@ -18,7 +18,7 @@ public class SimpleTest {
     static class BoundClaim extends HashMap<String, Object> {
         static BoundClaim of(){
             return new BoundClaim();
-        };
+        }
         BoundClaim putt(String key, Object value){
             super.put(key,value);
             return this;
@@ -35,8 +35,9 @@ public class SimpleTest {
         String expectedRequestString =
                 "{\"roleFor\":\"Human\",\"boundClaim\":{\"roles\":[\"role1\",\"role2\",\"role3\"]}}";
         assertThat(actualSerialisedString).isEqualTo(expectedRequestString);
-        Request actualSerialisedRequest = gson.fromJson(expectedRequestString, Request.class);
-        assertThat(actualSerialisedRequest).isEqualTo(expectedRequest);
+        Request actualDeserialisedRequest = gson.fromJson(expectedRequestString, Request.class);
+        assertThat(actualDeserialisedRequest).isEqualTo(expectedRequest);
+        assertThat(actualDeserialisedRequest.boundClaim.get("roles")).asList().contains("role1");
     }
 
     @Test
