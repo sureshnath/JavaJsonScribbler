@@ -21,15 +21,16 @@ public class CucumberParameterTypeExampleSteps {
         assertThat(solarObjects.get(objectUnderTest)).isEqualTo(expectedColor);
     }
 
-    @ParameterType("Red|White|Blue")
+    @ParameterType("\\w+")
     public Color color(String color){
         return Color.valueOf(color);
     }
 
-    final Map<String, Color> solarObjects = Map.of( "Earth", Color.Blue, "Sun", Color.Red, "Moon", Color.White);
+    final Map<String, Color> solarObjects = Map.of( "Earth", Color.Blue, "Sun", Color.Red
+            , "Moon", Color.White, "Mercury", Color.Silver);
 
     enum Color{
-        Red, White, Blue
+        Red, White, Blue, Silver
     }
 
 }

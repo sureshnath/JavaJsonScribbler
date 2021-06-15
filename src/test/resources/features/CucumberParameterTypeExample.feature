@@ -8,3 +8,4 @@ Feature: Cucumber Parameter types example
     | Sun | Red |
     | Moon | White |
     | Earth | Blue |
+    | Mercury | Silver  |
